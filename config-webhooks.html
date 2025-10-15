@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configure FinBot.ma Webhooks</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { padding: 10px 20px; background: #667eea; color: white; border: none; cursor: pointer; }
+    button:hover { background: #764ba2; }
+    #message { margin-top: 10px; color: green; }
+  </style>
+</head>
+<body>
+  <h2>Configure Webhook URLs for FinBot.ma</h2>
+  <p>Enter your production webhook URLs for each calculator. Leave blank to keep defaults.</p>
+  <div class="form-group">
+    <label for="irWebhook">IR Calculator Webhook:</label>
+    <input type="url" id="irWebhook" placeholder="https://your-webhook/ir">
+  </div>
+  <div class="form-group">
+    <label for="isWebhook">IS Calculator Webhook:</label>
+    <input type="url" id="isWebhook" placeholder="https://your-webhook/is">
+  </div>
+  <div class="form-group">
+    <label for="tvaWebhook">TVA Calculator Webhook:</label>
+    <input type="url" id="tvaWebhook" placeholder="https://your-webhook/tva">
+  </div>
+  <div class="form-group">
+    <label for="loanWebhook">Loan Calculator Webhook:</label>
+    <input type="url" id="loanWebhook" placeholder="https://your-webhook/loan">
+  </div>
+  <div class="form-group">
+    <label for="investWebhook">Investment Calculator Webhook:</label>
+    <input type="url" id="investWebhook" placeholder="https://your-webhook/invest">
+  </div>
+  <div class="form-group">
+    <label for="budgetWebhook">Budget Calculator Webhook:</label>
+    <input type="url" id="budgetWebhook" placeholder="https://your-webhook/budget">
+  </div>
+  <button onclick="updateWebhooks()">Update Webhooks</button>
+  <div id="message"></div>
+
+  <script>
+    function updateWebhooks() {
+      const webhooks = {
+        ir: document.getElementById('irWebhook').value || "https://gg4444.app.n8n.cloud/webhook/3f3e31fa-5c50-4312-b91e-dd7aa995617a",
+        is: document.getElementById('isWebhook').value || "https://gg4444.app.n8n.cloud/webhook/b4cb13ca-eb1d-4309-978a-269ed40b5d84",
+        tva: document.getElementById('tvaWebhook').value || "https://gg4444.app.n8n.cloud/webhook/2e256ba7-3e8c-473d-abd4-84ead90a2019",
+        loan: document.getElementById('loanWebhook').value || "https://gg4444.app.n8n.cloud/webhook/29405531-9b0d-449d-9270-abb160de3fcf",
+        invest: document.getElementById('investWebhook').value || "https://gg4444.app.n8n.cloud/webhook/c7e3884c-552a-4549-aee5-712c46cd716b",
+        budget: document.getElementById('budgetWebhook').value || "https://gg4444.app.n8n.cloud/webhook/7e04da25-ad41-44cd-97f7-939dbc3139c7"
+      };
+
+      fetch('finbot.html')
+        .then(response => response.text())
+        .then(html => {
+          let updatedHtml = html;
+          for (const [calc, url] of Object.entries(webhooks)) {
+            updatedHtml = updatedHtml.replace(
+              new RegExp(`https://gg4444\\.app\\.n8n\\.cloud/webhook/[a-f0-9\\-]{36}(?=")`, 'g'),
+              url
+            );
+          }
+
+          const blob = new Blob([updatedHtml], { type: 'text/html' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'finbot.html';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+
+          document.getElementById('message').textContent = 'Webhooks updated! Download the new finbot.html and replace the original.';
+        })
+        .catch(error => {
+          document.getElementById('message').textContent = 'Error loading finbot.html: ' + error.message;
+          document.getElementById('message').style.color = 'red';
+        });
+    }
+  </script>
+</body>
+</html>
