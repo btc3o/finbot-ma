@@ -1,0 +1,6 @@
+Flask==3.0.3
+flask-cors==5.0.0
+matplotlib==3.9.2
+numpy==2.1.1
+arabic-reshaper==3.0.0
+python-bidi==0.5.2
