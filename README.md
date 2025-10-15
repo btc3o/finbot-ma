@@ -1,6 +1,11 @@
 # FinBot-MA
 FinBot.ma is a web-based tool for Moroccan users, offering calculators for IR (Income Tax), IS (Corporate Tax), TVA (VAT), Loans, Investments, and Budgets. Built with HTML, CSS, &amp; JavaScript, it features a responsive design with EN-FR-AR support, generating graphs with Matplotlib. Data logs to Google Sheets via n8n, &amp; an AI chatbot assists users. 
 
+
+
+https://github.com/user-attachments/assets/32b34412-bb7e-4464-b7d4-529c9b0b97ab
+
+
 # Step by Step How to Run the FinBot.ma Project :
 Follow these steps to set up and run the FinBot.ma financial tools platform locally:
 
