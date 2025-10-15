@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinBot.ma - Moroccan Financial Tools</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {max-width: 1200px; margin: 0 auto; position: relative;}
+
+    /* Language Switcher */
+    .language-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 25px;
+      padding: 6px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      gap: 4px;
+      z-index: 1000;
+    }
+
+    .lang-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      color: #666;
+    }
+
+    .lang-btn:hover {background: #f0f0f0;}
+    .lang-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.6s ease;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffffff 0%, #d4d8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header h1 span {
+      color: #ffda79;
+      -webkit-text-fill-color: #ffda79;
+    }
+    header p {
+      font-size: 1.05rem;
+      opacity: 0.95;
+      font-weight: 400;
+      color: #f0f0f0;
+      letter-spacing: 0.5px;
+    }
+
+    @keyframes fadeInDown {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .home-screen {display: block;}
+    .home-screen.hidden {display: none;}
+
+    .calculator-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-top: 30px;
+      max-width: 700px;
+      position: relative;
+      left: 0;
+      margin-left: 10px;
+    }
+
+    .calc-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      border: 2px solid transparent;
+    }
+
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .calc-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 28px rgba(102, 126, 234, 0.25);
+      border-color: #667eea;
+    }
+    .calc-card:hover::before {opacity: 1;}
+    .calc-card:active {transform: translateY(-3px) scale(1.01);}
+
+    .calc-card-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: block;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
+    }
+    .calc-card:hover .calc-card-icon {transform: scale(1.1) rotate(5deg);}
+
+    .calc-card-title {font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 6px;}
+    .calc-card-description {font-size: 0.8rem; color: #718096; margin-bottom: 12px;}
+    .calc-card-cta {color: #667eea; font-weight: 700; font-size: 0.8rem;}
+
+    .calculator-container {
+      display: none;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 700px;
+      margin-left: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+    .back-btn {
+      background: transparent;
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: 25px;
+      padding: 8px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    .back-btn:hover {background: #667eea; color: white;}
+
+    .form-group {margin-bottom: 15px;}
+    label {display: block; color: #333; font-weight: 600; margin-bottom: 5px;}
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {transform: translateY(-2px);}
+
+    .result {
+      margin-top: 15px;
+      background: #f6f6ff;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .graph {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .graph img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .bot-illustration {
+      position: absolute;
+      right: 60px;
+      top: 52%;
+      transform: translateY(-50%);
+      width: 280px;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(-50%) translateY(0); }
+      50% { transform: translateY(-50%) translateY(-10px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="language-switcher">
+    <button class="lang-btn active" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" data-lang="fr">🇫🇷 FR</button>
+    <button class="lang-btn" data-lang="ar">🇲🇦 AR</button>
+  </div>
+
+  <div class="container">
+    <div class="home-screen" id="homeScreen">
+      <header>
+        <h1><span>🤖 FinBot</span>.ma</h1>
+        <p data-key="tagline">Your smart Moroccan companion for taxes, loans, investments & budgeting</p>
+      </header>
+
+      <div class="calculator-cards">
+        <div class="calc-card" onclick="openCalculator('ir')"><span class="calc-card-icon">💰</span><h3 class="calc-card-title" data-key="ir-title">IR Calculator</h3><p class="calc-card-description" data-key="ir-desc">Calculate your personal income tax based on Moroccan tax brackets</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+        <div class="calc-card" onclick="openCalculator('is')"><span class="calc-card-icon">🏢</span><h3 class="calc-card-title" data-key="is-title">IS Calculator</h3><p class="calc-card-description" data-key="is-desc">Determine corporate tax on your business profits</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+        <div class="calc-card" onclick="openCalculator('tva')"><span class="calc-card-icon">🧾</span><h3 class="calc-card-title" data-key="tva-title">TVA Calculator</h3><p class="calc-card-description" data-key="tva-desc">Calculate VAT amounts with different rate options</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+        <div class="calc-card" onclick="openCalculator('loan')"><span class="calc-card-icon">🏠</span><h3 class="calc-card-title" data-key="loan-title">Loan Calculator</h3><p class="calc-card-description" data-key="loan-desc">Plan your loan payments and total interest costs</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+        <div class="calc-card" onclick="openCalculator('invest')"><span class="calc-card-icon">📈</span><h3 class="calc-card-title" data-key="invest-title">Investment Calculator</h3><p class="calc-card-description" data-key="invest-desc">Project your investment growth with compound returns</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+        <div class="calc-card" onclick="openCalculator('budget')"><span class="calc-card-icon">📊</span><h3 class="calc-card-title" data-key="budget-title">Budget Planner</h3><p class="calc-card-description" data-key="budget-desc">Track expenses and optimize your monthly budget</p><span class="calc-card-cta" data-key="cta">Calculate now</span></div>
+      </div>
+
+      <img src="person.png" alt="FinBot Assistant" class="bot-illustration" />
+    </div>
+
+    <div class="calculator-container" id="calculatorContainer">
+      <button class="back-btn" onclick="goBack()" data-key="back">← Back</button>
+      <div id="calculatorContent"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentLang = "en";
+
+    const translations = {
+      en: {
+        tagline: "Your smart Moroccan companion for taxes, loans, investments & budgeting",
+        "ir-title": "IR Calculator",
+        "ir-desc": "Calculate your personal income tax based on Moroccan tax brackets",
+        "is-title": "IS Calculator",
+        "is-desc": "Determine corporate tax on your business profits",
+        "tva-title": "TVA Calculator",
+        "tva-desc": "Calculate VAT amounts with different rate options",
+        "loan-title": "Loan Calculator",
+        "loan-desc": "Plan your loan payments and total interest costs",
+        "invest-title": "Investment Calculator",
+        "invest-desc": "Project your investment growth with compound returns",
+        "budget-title": "Budget Planner",
+        "budget-desc": "Track expenses and optimize your monthly budget",
+        cta: "Calculate now",
+        back: "← Back"
+      },
+      fr: {
+        tagline: "Votre compagnon marocain intelligent pour impôts, prêts, investissements et budget",
+        "ir-title": "Calculateur IR",
+        "ir-desc": "Calculez votre impôt sur le revenu selon les tranches marocaines",
+        "is-title": "Calculateur IS",
+        "is-desc": "Déterminez l'impôt sur les sociétés de vos bénéfices",
+        "tva-title": "Calculateur TVA",
+        "tva-desc": "Calculez les montants de TVA avec différentes options de taux",
+        "loan-title": "Calculateur de prêt",
+        "loan-desc": "Planifiez vos paiements de prêt et les coûts d'intérêt totaux",
+        "invest-title": "Calculateur d'investissement",
+        "invest-desc": "Projetez la croissance de votre investissement avec des rendements composés",
+        "budget-title": "Planificateur de budget",
+        "budget-desc": "Suivez les dépenses et optimisez votre budget mensuel",
+        cta: "Calculer maintenant",
+        back: "← Retour"
+      },
+      ar: {
+        tagline: "رفيقك المغربي الذكي للضرائب والقروض والاستثمارات والميزانية",
+        "ir-title": "حاسبة الضريبة على الدخل",
+        "ir-desc": "احسب ضريبة الدخل الشخصية بناءً على الشرائح الضريبية المغربية",
+        "is-title": "حاسبة الضريبة على الشركات",
+        "is-desc": "حدد الضريبة على أرباح عملك",
+        "tva-title": "حاسبة الضريبة على القيمة المضافة",
+        "tva-desc": "احسب مبالغ الضريبة على القيمة المضافة بمعدلات مختلفة",
+        "loan-title": "حاسبة القروض",
+        "loan-desc": "خطط لدفعات قرضك وإجمالي تكاليف الفائدة",
+        "invest-title": "حاسبة الاستثمار",
+        "invest-desc": "توقع نمو استثمارك بعوائد مركبة",
+        "budget-title": "مخطط الميزانية",
+        "budget-desc": "تتبع النفقات وحسّن ميزانيتك الشهرية",
+        cta: "احسب الآن",
+        back: "→ رجوع"
+      }
+    };
+
+    const langButtons = document.querySelectorAll(".lang-btn");
+    const textElements = document.querySelectorAll("[data-key]");
+    langButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        langButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentLang = btn.getAttribute("data-lang");
+        textElements.forEach(el => {
+          const key = el.getAttribute("data-key");
+          if (translations[currentLang][key]) {
+            el.textContent = translations[currentLang][key];
+          }
+        });
+      });
+    });
+
+    const homeScreen = document.getElementById('homeScreen');
+    const calcContainer = document.getElementById('calculatorContainer');
+    const calcContent = document.getElementById('calculatorContent');
+
+    function openCalculator(type) {
+      homeScreen.classList.add('hidden');
+      calcContainer.style.display = 'block';
+      calcContent.innerHTML = getCalculatorHTML(type);
+    }
+
+    function goBack() {
+      calcContainer.style.display = 'none';
+      homeScreen.classList.remove('hidden');
+    }
+
+    function translateCalcLabels() {
+      if (currentLang === 'fr') {
+        document.querySelectorAll('label').forEach(l => {
+          l.textContent = l.textContent
+            .replace('Annual Income', 'Revenu annuel')
+            .replace('Dependents', 'Personnes à charge')
+            .replace('Revenue', 'Revenu')
+            .replace('Expenses', 'Dépenses')
+            .replace('Amount HT', 'Montant HT')
+            .replace('Rate', 'Taux')
+            .replace('TVA Rate', 'Taux TVA')
+            .replace('Annual Rate', 'Taux annuel')
+            .replace('Loan Amount', 'Montant du prêt')
+            .replace('Duration (months)', 'Durée (mois)')
+            .replace('Initial Investment', 'Investissement initial')
+            .replace('Annual Return', 'Rendement annuel')
+            .replace('Years', 'Années')
+            .replace('Monthly Contribution', 'Contribution mensuelle')
+            .replace('Monthly Income', 'Revenu mensuel')
+            .replace('Monthly Expenses', 'Dépenses mensuelles');
+        });
+        document.querySelector('.btn').textContent = 'Calculer';
+      }
+      if (currentLang === 'ar') {
+        document.querySelectorAll('label').forEach(l => {
+          l.textContent = l.textContent
+            .replace('Annual Income', 'الدخل السنوي')
+            .replace('Dependents', 'الأفراد المعالين')
+            .replace('Revenue', 'الإيرادات')
+            .replace('Expenses', 'المصاريف')
+            .replace('Amount HT', 'المبلغ بدون الضريبة')
+            .replace('Rate', 'النسبة')
+            .replace('TVA Rate', 'نسبة TVA')
+            .replace('Annual Rate', 'النسبة السنوية')
+            .replace('Loan Amount', 'مبلغ القرض')
+            .replace('Duration (months)', 'المدة (بالشهور)')
+            .replace('Initial Investment', 'الاستثمار الأولي')
+            .replace('Annual Return', 'العائد السنوي')
+            .replace('Years', 'السنوات')
+            .replace('Monthly Contribution', 'المساهمة الشهرية')
+            .replace('Monthly Income', 'الدخل الشهري')
+            .replace('Monthly Expenses', 'المصاريف الشهرية');
+        });
+        document.querySelector('.btn').textContent = 'حسب';
+      }
+    }
+
+    function getCalculatorHTML(type) {
+      const calculators = {
+        ir: `<h2>💰 IR Calculator</h2><div class="form-group"><label>Annual Income (MAD)</label><input id="irIncome" type="number"></div><div class="form-group"><label>Dependents</label><input id="irDep" type="number"></div><button class="btn" onclick="calcIR()">Calculate</button><div class="result" id="irResult"></div>`,
+        is: `<h2>🏢 IS Calculator</h2><div class="form-group"><label>Revenue (MAD)</label><input id="isRev" type="number"></div><div class="form-group"><label>Expenses (MAD)</label><input id="isExp" type="number"></div><button class="btn" onclick="calcIS()">Calculate</button><div class="result" id="isResult"></div>`,
+        tva: `<h2>🧾 TVA Calculator</h2><div class="form-group"><label>Amount HT (MAD)</label><input id="tvaHT" type="number"></div><div class="form-group"><label>Rate</label><select id="tvaRate"><option value="0.20">20%</option><option value="0.14">14%</option><option value="0.10">10%</option><option value="0.07">7%</option></select></div><button class="btn" onclick="calcTVA()">Calculate</button><div class="result" id="tvaResult"></div>`,
+        loan: `<h2>🏠 Loan Calculator</h2><div class="form-group"><label>Loan Amount (MAD)</label><input id="loanAmt" type="number"></div><div class="form-group"><label>Rate (%)</label><input id="loanRate" type="number"></div><div class="form-group"><label>Duration (months)</label><input id="loanMonths" type="number"></div><button class="btn" onclick="calcLoan()">Calculate</button><div class="result" id="loanResult"></div>`,
+        invest: `<h2>📈 Investment Calculator</h2><div class="form-group"><label>Initial Investment</label><input id="invInit" type="number"></div><div class="form-group"><label>Rate (%)</label><input id="invRate" type="number"></div><div class="form-group"><label>Years</label><input id="invYears" type="number"></div><div class="form-group"><label>Monthly Contribution</label><input id="invMonthly" type="number"></div><button class="btn" onclick="calcInvest()">Calculate</button><div class="result" id="invResult"></div>`,
+        budget: `<h2>📊 Budget Planner</h2><div class="form-group"><label>Monthly Income</label><input id="budInc" type="number"></div><div class="form-group"><label>Monthly Expenses</label><input id="budExp" type="number"></div><button class="btn" onclick="calcBudget()">Analyze</button><div class="result" id="budResult"></div>`
+      };
+      setTimeout(translateCalcLabels, 100);
+      return calculators[type];
+    }
+
+    async function sendToFlask(calcType, inputData, resultValue) {
+      try {
+        const res = await fetch("http://localhost:5000/api/graph", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ type: calcType, inputs: inputData, result: resultValue, lang: currentLang })
+        });
+        const data = await res.json();
+        const graphDiv = document.createElement("div");
+        graphDiv.classList.add("graph");
+        if (data.image) {
+          graphDiv.innerHTML = `<img src="${data.image}" alt="Graph result" />`;
+        } else {
+          graphDiv.innerHTML = "<p>⚙️ Graph could not be generated.</p>";
+        }
+        document.querySelector(`#${calcType}Result`).appendChild(graphDiv);
+      } catch (err) {
+        console.error("Error sending to Flask:", err);
+      }
+    }
+
+    async function sendToWebhook(url, calcType, inputData, resultValue) {
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify([{
+            type: calcType,
+            inputs: inputData,
+            result: resultValue,
+            lang: currentLang
+          }])
+        });
+        if (response.ok) {
+          console.log("Data sent successfully to n8n");
+        } else {
+          console.error("Failed to send data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error sending to webhook:", error);
+      }
+    }
+
+    function calcIR(){
+      let i=+irIncome.value,d=+irDep.value,t=i*0.2-d*500;if(t<0)t=0;
+      irResult.innerHTML=`Estimated Tax: ${t.toFixed(2)} MAD`;
+      sendToFlask("ir",{income:i,dependents:d},t);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/3f3e31fa-5c50-4312-b91e-dd7aa995617a", "ir", {annualIncome: i, dependents: d}, t);
+    }
+    function calcIS(){
+      let r=+isRev.value,e=+isExp.value,p=r-e,t=p*0.2;if(t<0)t=0;
+      isResult.innerHTML=`Corporate Tax: ${t.toFixed(2)} MAD`;
+      sendToFlask("is",{revenue:r,expenses:e},t);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/b4cb13ca-eb1d-4309-978a-269ed40b5d84", "is", {revenue: r, expenses: e}, t);
+    }
+    function calcTVA(){
+      let h=+tvaHT.value,r=+tvaRate.value,t=h*r;
+      tvaResult.innerHTML=`TVA: ${t.toFixed(2)} MAD | TTC: ${(h+t).toFixed(2)} MAD`;
+      sendToFlask("tva",{amountHT:h,rate:r},t);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/2e256ba7-3e8c-473d-abd4-84ead90a2019", "tva", {amount_ht: h, rate: r}, (h+t));
+    }
+    function calcLoan(){
+      let P=+loanAmt.value,r=+loanRate.value/100/12,n=+loanMonths.value,m=(P*r)/(1-Math.pow(1+r,-n));
+      loanResult.innerHTML=`Monthly Payment: ${m.toFixed(2)} MAD`;
+      sendToFlask("loan",{amount:P,rate:loanRate.value,months:n},m);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/29405531-9b0d-449d-9270-abb160de3fcf", "loan", {loan_amount: P, rate: loanRate.value, duration: n}, undefined);
+    }
+    function calcInvest(){
+      let P=+invInit.value,r=+invRate.value/100/12,y=+invYears.value*12,c=+invMonthly.value,f=P*Math.pow(1+r,y)+c*((Math.pow(1+r,y)-1)/r);
+      invResult.innerHTML=`Future Value: ${f.toFixed(2)} MAD`;
+      sendToFlask("invest",{initial:P,rate:invRate.value,years:invYears.value,monthly:c},f);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/c7e3884c-552a-4549-aee5-712c46cd716b", "investment", {initial_investment: P, rate: invRate.value, years: invYears.value, monthly_contribution: c}, f);
+    }
+    function calcBudget(){
+      let i=+budInc.value,e=+budExp.value,res=i-e;
+      budResult.innerHTML=`Remaining Balance: ${res.toFixed(2)} MAD`;
+      sendToFlask("budget",{income:i,expenses:e},res);
+      sendToWebhook("https://gg4444.app.n8n.cloud/webhook/7e04da25-ad41-44cd-97f7-939dbc3139c7", "budget", {monthly_income: i, monthly_expenses: e}, res);
+    }
+  </script>
+
+  <script>
+    (function(){
+      if(!window.chatbase||window.chatbase("getState")!=="initialized"){
+        window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
+        window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}});
+      }
+      const onLoad=function(){
+        const script=document.createElement("script");
+        script.src="https://www.chatbase.co/embed.min.js";
+        script.id="84cFj6Jtlr2iDADjaSJNM";
+        script.domain="www.chatbase.co";
+        document.body.appendChild(script)
+      };
+      if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}
+    })();
+  </script>
+</body>
+</html>
