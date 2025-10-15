@@ -378,7 +378,7 @@ after u done the google sheet setup of all 6 sheets, go to each webhook & get yo
 Congrats! now you fully setup & u can use FinBot-MA how u want, (u can also modify the chatbase api to yours, & train it how u want with your data)
 
 
-## 10) Troubleshooting:
+## 11) Troubleshooting:
 
 If graphs don’t load, ensure Flask is running and input valid numbers (e.g., positive years for Investment).
 Check the terminal for errors (e.g., "Graph generation failed").
@@ -386,7 +386,7 @@ For n8n integration, set up webhooks with the URLs in finbot.html (e.g., https:/
 
 
 
-## 9) Stop the Server:
+## 12) Stop the Server:
 
 Press Ctrl+C in the terminal to stop the Flask server when done.
 
